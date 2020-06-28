@@ -2,12 +2,14 @@ package pl.javastart.exercises.classes;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
+import java.util.Optional;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 @Controller
 public class ControllerListUsers {
@@ -36,15 +38,6 @@ public class ControllerListUsers {
         return "redirect:/success";
     }
 
-//    @RequestMapping(value = "/search", method = RequestMethod.POST)
-//    @ResponseBody
-//    String searchUser(@RequestParam(required = false) String imie, @RequestParam(required = false) String nazwisko, @RequestParam(required = false) int wiek) {
-//        User listUsersToSearch = this.listUsers.getListUsers().stream()
-//                .filter(user -> user.getFirstName().equals(imie))
-//                .forEach(user -> System.out::println (user));
-//
-//    }
-
 
     @RequestMapping("/failed")
     String failedCreateUser() {
@@ -56,4 +49,28 @@ public class ControllerListUsers {
         return "success.html";
     }
 
+    @PostMapping("/search")
+    @ResponseBody
+    List<User> searchUser(@RequestParam(required = false) String imie, @RequestParam(required = false) String nazwisko, @RequestParam(required = false) int wiek) {
+        List<User> userList = listUsers.getListUsers();
+        Stream<User> findUser = userList.stream();
+        if (!imie.isEmpty()) {
+            findUser = findUser.filter(user -> imie.equals(user.getFirstName()));
+        } else if (!nazwisko.isEmpty()) {
+            findUser = findUser.filter(user -> nazwisko.equals(user.getLastName()));
+        } else {
+            findUser = findUser.filter(user -> wiek == user.getAge());
+        }
+
+        return findUser.collect(Collectors.toList());
+    }
+
+    @PostMapping("/delete")
+    @ResponseBody
+    String deleteUser(@RequestParam(required = false) String imie, @RequestParam(required = false) String nazwisko, @RequestParam(required = false) int wiek) {
+        List<User> userTodelete = searchUser(imie, nazwisko, wiek);
+        listUsers.deleteUser(userTodelete);
+
+        return "Usunięto użytkownika ";
+    }
 }

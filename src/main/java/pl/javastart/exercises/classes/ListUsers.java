@@ -3,6 +3,7 @@ package pl.javastart.exercises.classes;
 import org.springframework.stereotype.Repository;
 
 import java.util.ArrayList;
+import java.util.List;
 
 @Repository
 public class ListUsers {
@@ -19,6 +20,10 @@ public class ListUsers {
         return listUsers;
     }
 
+    public void deleteUser(List<User> user) {
+         listUsers.remove(user);
+    }
+
     public void setListUsers(ArrayList<User> listUsers) {
         this.listUsers = listUsers;
     }
@@ -28,4 +33,5 @@ public class ListUsers {
             System.out.println(user);
         }
     }
+
 }
