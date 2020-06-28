@@ -27,7 +27,7 @@ public class ControllerListUsers {
 
     @RequestMapping(value = "/add", method = RequestMethod.POST)
     String addUser(@RequestParam(required = false) String imie, @RequestParam String nazwisko, @RequestParam int wiek) {
-        if (imie == null) {
+        if (imie.isEmpty()) {
             return "redirect:/failed";
         }
         User user = new User(imie, nazwisko, wiek);
@@ -35,6 +35,16 @@ public class ControllerListUsers {
         listUsers1.add(user);
         return "redirect:/success";
     }
+
+//    @RequestMapping(value = "/search", method = RequestMethod.POST)
+//    @ResponseBody
+//    String searchUser(@RequestParam(required = false) String imie, @RequestParam(required = false) String nazwisko, @RequestParam(required = false) int wiek) {
+//        User listUsersToSearch = this.listUsers.getListUsers().stream()
+//                .filter(user -> user.getFirstName().equals(imie))
+//                .forEach(user -> System.out::println (user));
+//
+//    }
+
 
     @RequestMapping("/failed")
     String failedCreateUser() {
