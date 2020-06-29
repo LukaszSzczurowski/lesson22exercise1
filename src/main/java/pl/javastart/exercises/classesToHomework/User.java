@@ -1,4 +1,4 @@
-package pl.javastart.exercises.classes;
+package pl.javastart.exercises.classesToHomework;
 
 public class User {
     private String firstName;
