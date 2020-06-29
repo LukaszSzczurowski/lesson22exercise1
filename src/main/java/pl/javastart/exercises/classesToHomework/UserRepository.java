@@ -1,4 +1,4 @@
-package pl.javastart.exercises.classes;
+package pl.javastart.exercises.classesToHomework;
 
 import org.springframework.stereotype.Repository;
 
@@ -6,11 +6,11 @@ import java.util.ArrayList;
 import java.util.List;
 
 @Repository
-public class ListUsers {
+public class UserRepository {
 
     private ArrayList<User> listUsers = new ArrayList<>();
 
-    public ListUsers() {
+    public UserRepository() {
         listUsers.add(new User("Lukasz", "Okrasa", 25));
         listUsers.add(new User("Maria", "Beger", 67));
         listUsers.add(new User("Michal", "Wietnam", 15));
@@ -24,14 +24,9 @@ public class ListUsers {
          listUsers.remove(user);
     }
 
-    public void setListUsers(ArrayList<User> listUsers) {
-        this.listUsers = listUsers;
+    public void addUser(User user) {
+        listUsers.add(user);
     }
 
-    public void showUsers(){
-        for (User user : listUsers) {
-            System.out.println(user);
-        }
-    }
 
 }

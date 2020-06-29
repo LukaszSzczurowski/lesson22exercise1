@@ -1,58 +1,46 @@
-package pl.javastart.exercises.classes;
+package pl.javastart.exercises.classesToHomework;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
-import java.util.Optional;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 @Controller
 public class ControllerListUsers {
 
-    private ListUsers listUsers;
+    private UserRepository userRepository;
 
     @Autowired
-    public ControllerListUsers(ListUsers listUsers) {
-        this.listUsers = listUsers;
+    public ControllerListUsers(UserRepository listUsers) {
+        this.userRepository = listUsers;
     }
 
     @RequestMapping("/users")
     @ResponseBody
-    void printUsers() {
-        listUsers.showUsers();
+    String printUsers() {
+        ArrayList<User> usersToPrint = this.userRepository.getListUsers();
+        return "Użytkownicy : <br />" + usersToPrint.toString();
     }
 
     @RequestMapping(value = "/add", method = RequestMethod.POST)
     String addUser(@RequestParam(required = false) String imie, @RequestParam String nazwisko, @RequestParam int wiek) {
-        if (imie.isEmpty()) {
-            return "redirect:/failed";
+        if (imie == null){
+            return "redirect:/err.html";
         }
+
         User user = new User(imie, nazwisko, wiek);
-        ArrayList<User> listUsers1 = listUsers.getListUsers();
-        listUsers1.add(user);
-        return "redirect:/success";
-    }
-
-
-    @RequestMapping("/failed")
-    String failedCreateUser() {
-        return "err.html";
-    }
-
-    @RequestMapping("/success")
-    String successCreateUser() {
-        return "success.html";
+        userRepository.addUser(user);
+        return "redirect:/success.html";
     }
 
     @PostMapping("/search")
     @ResponseBody
     List<User> searchUser(@RequestParam(required = false) String imie, @RequestParam(required = false) String nazwisko, @RequestParam(required = false) int wiek) {
-        List<User> userList = listUsers.getListUsers();
+        List<User> userList = userRepository.getListUsers();
         Stream<User> findUser = userList.stream();
         if (!imie.isEmpty()) {
             findUser = findUser.filter(user -> imie.equals(user.getFirstName()));
@@ -69,7 +57,7 @@ public class ControllerListUsers {
     @ResponseBody
     String deleteUser(@RequestParam(required = false) String imie, @RequestParam(required = false) String nazwisko, @RequestParam(required = false) int wiek) {
         List<User> userTodelete = searchUser(imie, nazwisko, wiek);
-        listUsers.deleteUser(userTodelete);
+        userRepository.deleteUser(userTodelete);
 
         return "Usunięto użytkownika ";
     }
