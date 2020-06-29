@@ -28,37 +28,31 @@ public class ControllerListUsers {
 
     @RequestMapping(value = "/add", method = RequestMethod.POST)
     String addUser(@RequestParam(required = false) String imie, @RequestParam String nazwisko, @RequestParam int wiek) {
-        if (imie == null){
-            return "redirect:/err.html";
-        }
-
         User user = new User(imie, nazwisko, wiek);
-        userRepository.addUser(user);
-        return "redirect:/success.html";
+        boolean isNameNull = userRepository.addUser(user);
+        if (isNameNull)
+            return "redirect:/success.html";
+        else
+            return "redirect:/err.html";
     }
 
     @PostMapping("/search")
     @ResponseBody
-    List<User> searchUser(@RequestParam(required = false) String imie, @RequestParam(required = false) String nazwisko, @RequestParam(required = false) int wiek) {
-        List<User> userList = userRepository.getListUsers();
-        Stream<User> findUser = userList.stream();
-        if (!imie.isEmpty()) {
-            findUser = findUser.filter(user -> imie.equals(user.getFirstName()));
-        } else if (!nazwisko.isEmpty()) {
-            findUser = findUser.filter(user -> nazwisko.equals(user.getLastName()));
-        } else {
-            findUser = findUser.filter(user -> wiek == user.getAge());
-        }
-
-        return findUser.collect(Collectors.toList());
+    String searchUser(@RequestParam(required = false) String imie, @RequestParam(required = false) String nazwisko, @RequestParam(required = false) int wiek) {
+        boolean searchUser = userRepository.searchUser(new User(imie, nazwisko, wiek));
+        if (searchUser)
+            return "Znaleziono użytkownika " + imie;
+        else
+            return "Nie znaleziono użytkownika " + imie;
     }
 
     @PostMapping("/delete")
     @ResponseBody
     String deleteUser(@RequestParam(required = false) String imie, @RequestParam(required = false) String nazwisko, @RequestParam(required = false) int wiek) {
-        List<User> userTodelete = searchUser(imie, nazwisko, wiek);
-        userRepository.deleteUser(userTodelete);
-
-        return "Usunięto użytkownika ";
+        boolean deleteUser = userRepository.deleteUser(new User(imie, nazwisko, wiek));
+        if (deleteUser)
+            return "Usunięto użytkownika " + imie;
+        else
+            return "Nie usunięto użytkownika " + imie;
     }
 }

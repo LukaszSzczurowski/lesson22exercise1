@@ -8,24 +8,41 @@ import java.util.List;
 @Repository
 public class UserRepository {
 
-    private ArrayList<User> listUsers = new ArrayList<>();
+    private ArrayList<User> usersRepository = new ArrayList<>();
 
     public UserRepository() {
-        listUsers.add(new User("Lukasz", "Okrasa", 25));
-        listUsers.add(new User("Maria", "Beger", 67));
-        listUsers.add(new User("Michal", "Wietnam", 15));
+        usersRepository.add(new User("Lukasz", "Okrasa", 25));
+        usersRepository.add(new User("Maria", "Beger", 67));
+        usersRepository.add(new User("Michal", "Wietnam", 15));
     }
 
     public ArrayList<User> getListUsers() {
-        return listUsers;
+        return usersRepository;
     }
 
-    public void deleteUser(List<User> user) {
-         listUsers.remove(user);
+    public boolean addUser(User user) {
+        if (user.getFirstName() == null)
+            return false;
+        usersRepository.add(user);
+        return true;
     }
 
-    public void addUser(User user) {
-        listUsers.add(user);
+    public boolean searchUser(User user) {
+        if (user == null) {
+            return false;
+        }
+        for (User listUser : usersRepository) {
+            if (listUser.getFirstName().equals(user.getFirstName()))
+                return true;
+        }
+        return false;
+    }
+
+    public boolean deleteUser(User user) {
+        if (!(user.getFirstName() == null))
+            usersRepository.remove(user);
+
+        return false;
     }
 
 
